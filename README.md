@@ -64,7 +64,7 @@ $ pnpm install -D @types/js-yaml
 # 安装了该包后，我们使用 yaml#load 函数来加载上面创建的 YAML 文件。
 
 ```
-在 src目录下创建 config 目录，然后创建开发环境的配置文件 dev.yaml，内容如下：
+在 src目录下创建 config/index.ts 文件，然后创建开发环境的配置文件 dev.yaml，内容如下：
 ```yaml
 # 开发环境配置
 app:
@@ -133,9 +133,32 @@ export default () => {
   ) as Record<string, any>;
 };
 
+```
+上面配置就写死了,所以我们通过安装 cross-env 实现通过环境变量来动态读取配置文件`$ pnpm install -D cross-env` 、在包管理文件的scripts中配置环境变量。
+```js
+ "scripts": {
+    "start": "cross-env NODE_ENV=development nest start",
+    "start:dev": "cross-env NODE_ENV=development nest start --watch",
+    "start:prod": "cross-env NODE_ENV=production node dist/main",
+  },
 
 ```
 
+同时在 src/common目录下新建 enum/index.ts 枚举文件、新建环境配置枚举类型 
+```js 
+/**
+ * 环境变量枚举
+ * @description test = 'test' 测试配置
+ * @description production = 'prod' 生产配置
+ * @description development = 'dev' 开发配置
+ */
+export enum EnvEnum {
+  test = 'test',
+  production = 'prod',
+  development = 'dev',
+}
+
+```
 
 ## 3.3 配置mysql数据库连接
 

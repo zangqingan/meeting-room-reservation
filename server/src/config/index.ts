@@ -3,10 +3,14 @@ import * as yaml from 'js-yaml';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
-const YAML_CONFIG_FILENAME = 'dev.yaml';
+// 引入环境变量枚举类型
+import { EnvEnum } from 'src/common/enum';
 
 export default () => {
   return yaml.load(
-    readFileSync(join(__dirname, YAML_CONFIG_FILENAME), 'utf8'),
+    readFileSync(
+      join(__dirname, `./${EnvEnum[process.env.NODE_ENV]}.yml`),
+      'utf8',
+    ),
   ) as Record<string, any>;
 };

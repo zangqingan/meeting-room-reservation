@@ -1,0 +1,51 @@
+# 开发环境配置
+app:
+  prefix: ''
+  host: 'localhost'
+  port: 3000
+  name: 'dev'
+
+# 数据库配置
+db:
+  mysql:
+    host: 'localhost'
+    port: 3306
+    username: 'root'
+    password: 'wanggeng123456'
+    database: 'nest-vue-ruoyi'
+    charset: 'utf8mb4'
+    logger: 'file'
+    logging: true
+    multipleStatements: true
+    dropSchema: false
+    supportBigNumbers: true
+    bigNumberStrings: true
+
+# redis 配置
+redis:
+  host: '127.0.0.1'
+  port: 6379
+  db: 0
+  keyPrefix: 'nest:'
+
+# jwt 配置
+jwt:
+  SECRET: 'test'
+  SECRET1: 'test11'
+  EXPIRES_IN: '1h'
+  refreshExpiresIn: '2h'
+
+
+# 权限-路由白名单配置
+permission:
+  router:
+    whitelist:
+      [
+        { path: '/captchaImage', method: 'GET' },
+        { path: '/test', method: 'GET' },
+        { path: '/register', method: 'POST' },
+        { path: '/login', method: 'POST' },
+        { path: '/logout', method: 'POST' },
+        { path: '/permission/{id}', method: 'GET' },
+        { path: '/upload', method: 'POST' },
+      ]

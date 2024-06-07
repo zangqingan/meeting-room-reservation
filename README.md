@@ -53,7 +53,91 @@ $ nest new server
 
 
 ```
-## 3.2 配置mysql数据库连接
+## 3.2 配置全局配置读取 yaml 配置文件
+为实现参数的读取，需要安装如下依赖包：
+```bash
+# NestJs配置需要 @nestjs/config 
+$ pnpm install --save @nestjs/config
+# 读取和解析 YAML 文件，我们可以利用 js-yaml 包和ts类型提示包
+$ pnpm install --save js-yaml 
+$ pnpm install -D @types/js-yaml
+# 安装了该包后，我们使用 yaml#load 函数来加载上面创建的 YAML 文件。
+
+```
+在 src目录下创建 config 目录，然后创建开发环境的配置文件 dev.yaml，内容如下：
+```yaml
+# 开发环境配置
+app:
+  prefix: ''
+  host: 'localhost'
+  port: 3000
+  name: 'dev'
+
+# 数据库配置
+db:
+  mysql:
+    host: 'localhost'
+    port: 3306
+    username: 'root'
+    password: 'wanggeng123456'
+    database: 'nest-vue-ruoyi'
+    charset: 'utf8mb4'
+    logger: 'file'
+    logging: true
+    multipleStatements: true
+    dropSchema: false
+    supportBigNumbers: true
+    bigNumberStrings: true
+
+# redis 配置
+redis:
+  host: '127.0.0.1'
+  port: 6379
+  db: 0
+  keyPrefix: 'nest:'
+
+# jwt 配置
+jwt:
+  SECRET: 'test'
+  SECRET1: 'test11'
+  EXPIRES_IN: '1h'
+  refreshExpiresIn: '2h'
+
+
+# 权限-路由白名单配置
+permission:
+  router:
+    whitelist:
+      [
+        { path: '/captchaImage', method: 'GET' },
+        { path: '/test', method: 'GET' },
+        { path: '/register', method: 'POST' },
+        { path: '/login', method: 'POST' },
+        { path: '/logout', method: 'POST' },
+        { path: '/permission/{id}', method: 'GET' },
+        { path: '/upload', method: 'POST' },
+      ]
+```
+
+<!-- 配置全局配置读取 yaml 配置文件 -->
+```js
+import * as yaml from 'js-yaml';
+import { readFileSync } from 'fs';
+import { join } from 'path';
+
+const YAML_CONFIG_FILENAME = 'dev.yaml';
+
+export default () => {
+  return yaml.load(
+    readFileSync(join(__dirname, YAML_CONFIG_FILENAME), 'utf8'),
+  ) as Record<string, any>;
+};
+
+
+```
+
+
+## 3.3 配置mysql数据库连接
 
 ```bash
 $ pnpm install --save @nestjs/typeorm typeorm mysql2

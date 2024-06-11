@@ -457,5 +457,67 @@ bootstrap();
 
 ```
 
+## 3.6 用户模块接口编写
+user 模块有以下接口：
+
+| 接口路径 | 	请求方式	| 描述 | 
+| :---        |    :----:   |          ---: |
+| /user/login                | 	POST	| 普通用户登录 | 
+| /user/register             | 	POST	| 普通用户注册 | 
+| /user/update               | 	POST	| 普通用户个人信息修改 | 
+| /user/update_password      | 	POST	| 普通用户修改密码 | 
+| /user/admin/login| 	POST|	管理员登录 | 
+| /user/admin/update_password| 	POST| 	管理员修改密码 | 
+| /user/admin/update | 	POST| 	管理员个人信息修改 | 
+| /user/list| 	GET	| 用户列表 | 
+| /user/freeze| 	GET| 	冻结用户 | 
+
+## 3.7 添加 ValidationPipe，来对请求体做校验。
+使用 class-validator class-transformer 包创建全局校验管道。
+它作用是验证，要么返回值不变，要么抛出异常。
+
+安装依赖并在 src/common/pipe 目录下创建全局验证管道。
+```bash
+$ pnpm install --save class-validator class-transformer
+$ nest g pi common/pipes/validation-pipe --no-spec
+
+```
+校验管道实现逻辑
+```js
+import {
+  ArgumentMetadata,
+  BadRequestException,
+  Injectable,
+  PipeTransform,
+} from '@nestjs/common';
+import { validate } from 'class-validator'; // 引入验证模块
+import { plainToInstance } from 'class-transformer'; // 引入转换模块
+
+@Injectable()
+export class ValidationPipePipe implements PipeTransform {
+  async transform(value: any, { metatype }: ArgumentMetadata) {
+    // 如果没有传入验证规则，则不验证，直接返回数据
+    if (!metatype || !this.toValidate(metatype)) {
+      return value;
+    }
+    // plainToInstance 方法将普通的 JavaScript 参数对象转换为可验证的 dto class 的实例对象。
+    const object = plainToInstance(metatype, value);
+    // 调用 class-validator 包的 validate api 对它做验证。如果验证不通过，就抛一个异常。
+    const errors = await validate(object);
+    if (errors.length > 0) {
+      throw new BadRequestException(`Validation failed: ${errors}`);
+    }
+    return value;
+  }
+
+  private toValidate(metatype: any): boolean {
+    const types: any[] = [String, Boolean, Number, Array, Object];
+    return !types.includes(metatype);
+  }
+}
+
+// 在main.ts中全局注册
+app.useGlobalPipes(new ValidationPipe());
+```
 
 

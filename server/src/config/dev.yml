@@ -12,7 +12,7 @@ db:
     port: 3306
     username: 'root'
     password: 'wanggeng123456'
-    database: 'meeting-room-reservation'
+    database: 'meeting_room_booking_system'
     charset: 'utf8mb4'
     logger: 'file' # 会生成 ormlogs.log 文件记录日志
     logging: true # 会生成 ormlogs.log 文件记录日志

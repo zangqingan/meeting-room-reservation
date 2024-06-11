@@ -25,6 +25,10 @@ import configuration from './config';
           synchronize: false,
           entities: [`${__dirname}/**/*.entity{.ts,.js}`], // 加载所有的实体文件
           autoLoadEntities: true,
+          connectorPackage: 'mysql2',
+          extra: {
+            authPlugin: 'sha256_password',
+          },
           ...configService.get('db.mysql'),
         } as TypeOrmModuleOptions;
       },

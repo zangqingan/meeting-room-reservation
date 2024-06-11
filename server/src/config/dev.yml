@@ -12,10 +12,10 @@ db:
     port: 3306
     username: 'root'
     password: 'wanggeng123456'
-    database: 'nest-vue-ruoyi'
+    database: 'meeting-room-reservation'
     charset: 'utf8mb4'
-    logger: 'file'
-    logging: true
+    logger: 'file' # 会生成 ormlogs.log 文件记录日志
+    logging: true # 会生成 ormlogs.log 文件记录日志
     multipleStatements: true
     dropSchema: false
     supportBigNumbers: true

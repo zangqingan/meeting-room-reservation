@@ -51,7 +51,6 @@ meeting-room-reservation
 $ nest new server
 # 使用pnpm
 
-
 ```
 ## 3.2 配置全局配置读取 yaml 配置文件
 为实现参数的读取，需要安装如下依赖包：
@@ -133,6 +132,19 @@ export default () => {
   ) as Record<string, any>;
 };
 
+// 注意要在nest-cli.json中配置全局配置编译选项，不然打包后无法读取配置文件
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "src",
+  "compilerOptions": {
+    "deleteOutDir": true,
+    "assets": ["**/*.yml"],// 新增
+    "watchAssets": true // 新增
+  }
+}
+
+
 ```
 上面配置就写死了,所以我们通过安装 cross-env 实现通过环境变量来动态读取配置文件`$ pnpm install -D cross-env` 、在包管理文件的scripts中配置环境变量。
 ```js
@@ -193,17 +205,17 @@ export class AppModule {}
 import  { ConfigService } from '@nestjs/config';
 constructor(private configService: ConfigService) {}
 
-
-
 ```
 
-
-
 ## 3.3 配置mysql数据库连接
-
+为了读取数据库配置，需要安装如下依赖包：同时我们使用异步的方式加载数据库配置。
 ```bash
 $ pnpm install --save @nestjs/typeorm typeorm mysql2
 
 
 ```
+在根模块中注册TypeOrmModule 提供者实现数据库的连接
+```js
 
+
+```

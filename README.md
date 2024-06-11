@@ -263,3 +263,163 @@ export class AppModule {}
 ```sql
 CREATE DATABASE meeting_room_booking_system DEFAULT CHARACTER SET utf8mb4;
 ```
+
+## 3.4 用户模块创建
+在 src/modules/system下创建用户模块、
+```js 
+// 快速创建用户curd模块且不生成测试文件
+$ nest g resource user --no-spec
+
+```
+根据设计的数据库表结构、创建对应的实体类。在 src/user/entities 目录，新建 3 个实体 User、Role、Permission。这里表的关系指定了、而不是
+
+**用户表**
+```js    
+// user.entity.ts
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { Role } from './role.entity';
+
+@Entity({
+  name: 'users',
+})
+export class User {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column({
+    length: 50,
+    comment: '用户名',
+  })
+  username: string;
+
+  @Column({
+    length: 50,
+    comment: '密码',
+  })
+  password: string;
+
+  @Column({
+    name: 'nick_name',
+    length: 50,
+    comment: '昵称',
+  })
+  nickName: string;
+
+  @Column({
+    comment: '邮箱',
+    length: 50,
+  })
+  email: string;
+
+  @Column({
+    comment: '头像',
+    length: 100,
+    nullable: true,
+  })
+  headPic: string;
+
+  @Column({
+    comment: '手机号',
+    length: 20,
+    nullable: true,
+  })
+  phoneNumber: string;
+
+  @Column({
+    comment: '是否冻结',
+    default: false,
+  })
+  isFrozen: boolean;
+
+  @Column({
+    comment: '是否是管理员',
+    default: false,
+  })
+  isAdmin: boolean;
+
+  @CreateDateColumn()
+  createTime: Date;
+
+  @UpdateDateColumn()
+  updateTime: Date;
+
+  @ManyToMany(() => Role)
+  @JoinTable({
+    name: 'user_roles',
+  })
+  roles: Role[];
+}
+
+
+
+```
+
+**角色表**
+```js
+// role.entity.ts
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Permission } from './permission.entity';
+
+@Entity({
+  name: 'roles',
+})
+export class Role {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column({
+    length: 20,
+    comment: '角色名',
+  })
+  name: string;
+
+  @ManyToMany(() => Permission)
+  @JoinTable({
+    name: 'role_permissions',
+  })
+  permissions: Permission[];
+}
+
+```
+
+
+**权限表**
+```js     
+// permission.entity.ts
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+
+@Entity({
+  name: 'permissions',
+})
+export class Permission {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column({
+    length: 20,
+    comment: '权限代码',
+  })
+  code: string;
+
+  @Column({
+    length: 100,
+    comment: '权限描述',
+  })
+  description: string;
+}
+
+```

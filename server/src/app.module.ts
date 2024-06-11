@@ -4,6 +4,7 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { UserModule } from './modules/system/user/user.module';
 import configuration from './config';
 
 @Module({
@@ -22,17 +23,15 @@ import configuration from './config';
         return {
           type: 'mysql',
           keepConnectionAlive: true,
-          synchronize: false,
+          synchronize: true,
           entities: [`${__dirname}/**/*.entity{.ts,.js}`], // 加载所有的实体文件
           autoLoadEntities: true,
           connectorPackage: 'mysql2',
-          extra: {
-            authPlugin: 'sha256_password',
-          },
           ...configService.get('db.mysql'),
         } as TypeOrmModuleOptions;
       },
     }),
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],

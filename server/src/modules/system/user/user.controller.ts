@@ -8,8 +8,10 @@ import {
   Delete,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto, UpdateUserDto } from './dto';
+import { CreateUserDto, UpdateUserDto, RegisterUserDto } from './dto';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('用户')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -37,5 +39,13 @@ export class UserController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
+  }
+
+  @ApiOperation({ summary: '用户注册' })
+  @ApiBody({ required: true, type: RegisterUserDto })
+  @ApiResponse({ status: 200, description: '注册成功' })
+  @Post('/register')
+  register(@Body() registerUserDto: RegisterUserDto) {
+    return this.userService.register(registerUserDto);
   }
 }

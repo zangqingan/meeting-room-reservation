@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto, UpdateUserDto } from './dto';
+import { CreateUserDto, UpdateUserDto, RegisterUserDto } from './dto';
 
 @Injectable()
 export class UserService {
@@ -21,5 +21,9 @@ export class UserService {
 
   remove(id: number) {
     return `This action removes a #${id} user`;
+  }
+
+  async register(user: RegisterUserDto) {
+    console.log(user);
   }
 }

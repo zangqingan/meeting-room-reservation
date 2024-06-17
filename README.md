@@ -535,5 +535,64 @@ $ nest g service modules/redis --no-spec
 将redis 模块声明为全局模块这样只需要在 AppModule 里引入，别的模块不用引入也可以注入 RedisService 了。并且通过动态模块的方式注入全局配置
 
 ```js
+import { Global, Module } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { createClient } from 'redis';
+import { RedisService } from './redis.service';
+
+@Global()
+@Module({
+  providers: [
+    RedisService,
+    {
+      provide: 'REDIS_CLIENT',
+      useFactory: async (configService: ConfigService) => {
+        const client = createClient({
+          url: `redis://${configService.get('redis.host')}:${configService.get('redis.port')}`,
+          socket: {
+            host: configService.get('redis.host'),
+            port: configService.get('redis.port'),
+          },
+        });
+        client.on('error', (err) => console.log('Redis Client Error', err));
+        await client.connect();
+        return client;
+      },
+      inject: [ConfigService],
+    },
+  ],
+  exports: [RedisService], // 记得导出
+})
+export class RedisModule {}
+
+import { Inject, Injectable } from '@nestjs/common';
+import { RedisClientType } from 'redis';
+
+@Injectable()
+export class RedisService {
+  /**
+   * 注入 redisClient
+   */
+  @Inject('REDIS_CLIENT')
+  private redisClient: RedisClientType;
+
+  /**
+   * @param key 键值
+   * @returns 键值对应的值
+   */
+  async get(key: string) {
+    return await this.redisClient.get(key);
+  }
+
+  /**
+   * @param key 键值
+   * @param value 键值对应的值
+   * @param expire 过期时间
+   * @returns
+   */
+  async set(key: string, value: string | number, expire?: number) {
+    await this.redisClient.set(key, value, { EX: expire });
+  }
+}
 
 ```

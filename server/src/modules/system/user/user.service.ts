@@ -58,7 +58,7 @@ export class UserService {
 
     user.password = md5(user.password);
     try {
-      await this.userRepository.create(user);
+      await this.userRepository.save(user);
       return '注册成功';
     } catch (error) {
       throw new HttpException(`注册失败${error}`, HttpStatus.BAD_REQUEST);

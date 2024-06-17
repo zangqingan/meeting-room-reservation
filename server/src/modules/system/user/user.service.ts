@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 
 import { RedisService } from 'src/modules/redis/redis.service';
 import { CacheEnum } from 'src/common/enum';
+import { md5 } from 'src/common/utils';
 
 import { CreateUserDto, UpdateUserDto, RegisterUserDto } from './dto';
 import { User } from './entities/user.entity';
@@ -54,6 +55,8 @@ export class UserService {
     if (foundUser) {
       throw new HttpException('用户名已被注册', HttpStatus.BAD_REQUEST);
     }
+
+    user.password = md5(user.password);
     try {
       await this.userRepository.create(user);
       return '注册成功';

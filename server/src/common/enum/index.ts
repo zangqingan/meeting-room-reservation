@@ -13,3 +13,11 @@ export enum EnvEnum {
   production = 'prod',
   development = 'dev',
 }
+
+/**
+ * redis缓存的 key
+ * @description CAPTCHA_KEY = 'captcha_:' 发送邮箱验证码 redis key
+ */
+export enum CacheEnum {
+  CAPTCHA_KEY = 'captcha_:',
+}

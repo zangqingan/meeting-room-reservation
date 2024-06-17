@@ -5,6 +5,7 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './modules/system/user/user.module';
+import { RedisModule } from './modules/redis/redis.module';
 import configuration from './config';
 
 @Module({
@@ -32,6 +33,7 @@ import configuration from './config';
       },
     }),
     UserModule,
+    RedisModule,
   ],
   controllers: [AppController],
   providers: [AppService],

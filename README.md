@@ -472,7 +472,7 @@ user 模块有以下接口：
 | /user/list| 	GET	| 用户列表 | 
 | /user/freeze| 	GET| 	冻结用户 | 
 
-## 3.7 添加 ValidationPipe，来对请求体做校验。
+## 3.7 添加 ValidationPipe，来对请求数据做校验。
 使用 class-validator class-transformer 包创建全局校验管道。
 它作用是验证，要么返回值不变，要么抛出异常。
 
@@ -521,4 +521,19 @@ app.useGlobalPipes(new ValidationPipe());
 ```
 
 
-## 
+## 3.8 封装 redis 缓存模块
+用户注册的逻辑是先从 redis 缓存中查询是否有跟发送给的邮箱匹配的验证码，有则进入下一步查询用户名是否在数据库中存在，没有(验证码过期或输入错误)报错。所以这里我们先封装一个 redis 模块方便复用。
+
+```bash  
+# 安装依赖
+$ pnpm install --save redis
+# 在 modules/redis 目录下
+$ nest g module modules/redis
+$ nest g service modules/redis --no-spec
+
+```
+将redis 模块声明为全局模块这样只需要在 AppModule 里引入，别的模块不用引入也可以注入 RedisService 了。并且通过动态模块的方式注入全局配置
+
+```js
+
+```

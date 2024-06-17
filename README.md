@@ -598,11 +598,79 @@ export class RedisService {
 ```
 
 ## 3.9 封装邮箱发送模块
-在注册和找回密码时使用
+在注册和找回密码时使用、需发送邮件，所以这里我们封装一个发送邮件的模块。
+这里以配置腾讯QQ邮箱为例。
 
 ```bash
 $ pnpm install --save nodemailer
 # 官网 https://nodemailer.com
 $ nest g  resource modules/email --no-spec
 
+```
+
+```js
+import { Module, Global } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { createTransport } from 'nodemailer';
+import { EmailService } from './email.service';
+
+@Global()
+@Module({
+  providers: [
+    EmailService,
+    {
+      provide: 'EMAIL_SERVICE',
+      useFactory: async (configService: ConfigService) => {
+        const emailService = createTransport({
+          host: configService.get('email.host'),
+          port: configService.get('email.port'),
+          service: configService.get('email.service'),
+          secure: configService.get('email.secure'),
+          auth: {
+            user: configService.get('email.user'),
+            pass: configService.get('email.pass'), //授权码
+          },
+        });
+        return emailService;
+      },
+      inject: [ConfigService],
+    },
+  ],
+  exports: [EmailService],
+})
+export class EmailModule {}
+
+import { Inject, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+
+import { Transporter } from 'nodemailer';
+
+@Injectable()
+export class EmailService {
+  // 注入 email 模块
+  @Inject('EMAIL_SERVICE') private transporter: Transporter;
+  // 获取配置
+  constructor(private readonly configService: ConfigService) {}
+
+  /**
+   * 发送邮件
+   * @param to 收件人邮箱地址
+   * @param subject 邮件主题(标题)
+   * @param html 邮件内容
+   */
+  async sendMail({ to, subject, html }) {
+    const address = this.configService.get('email.user');
+    await this.transporter.sendMail({
+      from: {
+        name: '会议室预定系统', // 发件人名称
+        address, // 注意发件人邮箱地址是自己配置了SMTP的那个邮箱地址
+      },
+      to,
+      subject,
+      html,
+    });
+  }
+}
+
+// 需要的地方注入EmailService调用sendMail方法即可。
 ```

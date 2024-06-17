@@ -35,6 +35,16 @@ jwt:
   EXPIRES_IN: '1h'
   refreshExpiresIn: '2h'
 
+# Email 配置
+# jwt 配置
+email:
+  host: 'smtp.qq.com'
+  port: 465
+  secure: true # true for port 465, false for other ports
+  service: 'QQ'
+  user: '1120097978@qq.com'
+  pass: 'zhfeaaobykpihfae'
+
 
 # 权限-路由白名单配置
 permission:

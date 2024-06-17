@@ -6,6 +6,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './modules/system/user/user.module';
 import { RedisModule } from './modules/redis/redis.module';
+import { EmailModule } from './modules/email/email.module';
 import configuration from './config';
 
 @Module({
@@ -34,6 +35,7 @@ import configuration from './config';
     }),
     UserModule,
     RedisModule,
+    EmailModule,
   ],
   controllers: [AppController],
   providers: [AppService],

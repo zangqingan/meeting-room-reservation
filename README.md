@@ -596,3 +596,13 @@ export class RedisService {
 }
 
 ```
+
+## 3.9 封装邮箱发送模块
+在注册和找回密码时使用
+
+```bash
+$ pnpm install --save nodemailer
+# 官网 https://nodemailer.com
+$ nest g  resource modules/email --no-spec
+
+```

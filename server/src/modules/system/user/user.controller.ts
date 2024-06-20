@@ -28,6 +28,7 @@ import {
   LoginUserDto,
 } from './dto';
 import { Public } from 'src/common/decorators/public/public.decorator';
+import { RequirePermissions } from 'src/common/decorators/requirePermissions/requirePermissions.decorator';
 
 @ApiTags('用户')
 @Controller('user')
@@ -45,7 +46,6 @@ export class UserController {
   @ApiOperation({ summary: '发送注册验证码' })
   @ApiQuery({ name: 'address', required: true, description: '邮箱地址' })
   async captcha(@Query('address') address: string) {
-    console.log(address);
     const code = Math.random().toString().slice(2, 8);
 
     // 根据邮箱地址缓存对应的验证码
@@ -77,6 +77,7 @@ export class UserController {
   @ApiOperation({ summary: '普通刷新token' })
   @ApiQuery({ name: 'refreshToken', required: true })
   @ApiResponse({ status: 200, description: '刷新成功' })
+  @RequirePermissions('access', 'change')
   @Get('refresh')
   async refresh(@Query('refreshToken') refreshToken: string) {
     return await this.userService.refreshToken(refreshToken, false);

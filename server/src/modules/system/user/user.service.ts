@@ -62,7 +62,6 @@ export class UserService {
    * @param user
    */
   async register(user: RegisterUserDto) {
-    console.log(user);
     // 判断验证码是否存在和是否正确
     const isExitCaptcha = await this.redisService.get(
       `${CacheEnum.CAPTCHA_KEY}${user.email}`,
@@ -220,7 +219,6 @@ export class UserService {
       },
       relations: ['roles', 'roles.permissions'],
     });
-    console.log('user', user);
 
     return {
       id: user.id,

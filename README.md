@@ -775,6 +775,11 @@ $ pnpm install --save path-to-regexp
 ```bash
 $ nest g decorator common/decorators/public  --no-spec 
 ```
+再来实现权限认证、也是需要一个自定义装饰器传入权限码。同时创建一个权限守卫类、检测是否具有权限。
+```bash
+$ nest g decorator common/decorators/requirePermissions  --no-spec 
+$ nest g guard common/guards/requirePermissions --no-spec
+```
 
 ##
 ##

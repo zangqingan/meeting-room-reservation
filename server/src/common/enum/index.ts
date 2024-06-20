@@ -23,3 +23,13 @@ export enum CacheEnum {
   CAPTCHA_KEY = 'captcha_:',
   LOGIN_TOKEN_KEY = 'login_tokens:',
 }
+
+/**
+ * 权限枚举
+ * @description access = 'access' 访问权限
+ * @description change = 'change' 修改权限
+ */
+export enum PermissionEnum {
+  access = 'access',
+  change = 'change',
+}

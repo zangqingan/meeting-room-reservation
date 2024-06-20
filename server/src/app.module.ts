@@ -10,6 +10,7 @@ import { RedisModule } from './modules/redis/redis.module';
 import { EmailModule } from './modules/email/email.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { JwtAuthGuard } from './common/guards/auth/auth.guard';
+import { PermissionGuard } from './common/guards/permission/permission.guard';
 import configuration from './config';
 
 @Module({
@@ -47,6 +48,10 @@ import configuration from './config';
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: PermissionGuard,
     },
   ],
 })

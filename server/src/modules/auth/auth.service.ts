@@ -22,9 +22,9 @@ export class AuthService {
    */
   async parseToken(token: string) {
     try {
-      return this.jwtService.verify(token.replace('Bearer ', ''));
+      return await this.jwtService.verify(token);
     } catch (error) {
-      throw new UnauthorizedException(`登录 token 失效，请重新登录${error}`);
+      throw new UnauthorizedException(`token 失效，请重新登录${error}`);
     }
   }
 }

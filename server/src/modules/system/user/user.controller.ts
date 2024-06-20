@@ -73,9 +73,20 @@ export class UserController {
     return 'done';
   }
 
-  @Get()
-  findAll() {
-    return this.userService.findAll();
+  @ApiOperation({ summary: '普通刷新token' })
+  @ApiQuery({ name: 'refreshToken', required: true })
+  @ApiResponse({ status: 200, description: '刷新成功' })
+  @Get('refresh')
+  async refresh(@Query('refreshToken') refreshToken: string) {
+    return await this.userService.refreshToken(refreshToken, false);
+  }
+
+  @ApiOperation({ summary: '管理员用户刷新token' })
+  @ApiQuery({ name: 'refreshToken', required: true })
+  @ApiResponse({ status: 200, description: '刷新成功' })
+  @Get('admin/refresh')
+  async adminRefresh(@Query('refreshToken') refreshToken: string) {
+    return await this.userService.refreshToken(refreshToken, true);
   }
 
   @Get(':id')
@@ -115,5 +126,10 @@ export class UserController {
   @Post('admin/login')
   async adminLogin(@Body() loginUser: LoginUserDto) {
     return await this.userService.login(loginUser, true);
+  }
+
+  @Get()
+  findAll() {
+    return this.userService.findAll();
   }
 }

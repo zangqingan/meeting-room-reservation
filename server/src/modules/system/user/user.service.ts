@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -149,6 +154,82 @@ export class UserService {
 
     return vo;
   }
+
+  /**
+   * 刷新 token
+   * @param token
+   */
+  async refreshToken(token: string, isAdmin: boolean = false) {
+    try {
+      // 解析 token 获取用户id
+      const data = await this.authService.parseToken(token);
+      const user = await this.findUserById(data.userId, isAdmin);
+
+      // 重新生成两个token
+      const access_token = await this.authService.createToken(
+        {
+          userId: user.id,
+          username: user.username,
+          roles: user.roles,
+          permissions: user.permissions,
+        },
+        {
+          expiresIn: this.configService.get('jwt.EXPIRES_IN') || '30m',
+        },
+      );
+
+      const refresh_token = await this.authService.createToken(
+        {
+          userId: user.id,
+        },
+        {
+          expiresIn: this.configService.get('jwt.refreshExpiresIn') || '7d',
+        },
+      );
+
+      return {
+        access_token,
+        refresh_token,
+      };
+    } catch (error) {
+      throw new UnauthorizedException(error);
+    }
+  }
+
+  /**
+   * @param userId 用户id
+   * @param isAdmin 是否是管理员
+   * @returns
+   */
+  async findUserById(userId: number, isAdmin: boolean) {
+    const user = await this.userRepository.findOne({
+      where: {
+        id: userId,
+        isAdmin,
+      },
+      relations: ['roles', 'roles.permissions'],
+    });
+    console.log('user', user);
+
+    return {
+      id: user.id,
+      username: user.username,
+      isAdmin: user.isAdmin,
+      roles: user.roles.map((item) => item.name),
+      permissions: user.roles.reduce((arr, item) => {
+        item.permissions.forEach((permission) => {
+          if (arr.indexOf(permission) === -1) {
+            arr.push(permission);
+          }
+        });
+        return arr;
+      }, []),
+    };
+  }
+
+  /**
+   * 初始化数据
+   */
   async initData() {
     const user1 = new User();
     user1.username = 'zangqingan';

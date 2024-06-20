@@ -17,7 +17,9 @@ export enum EnvEnum {
 /**
  * redis缓存的 key
  * @description CAPTCHA_KEY = 'captcha_:' 发送邮箱验证码 redis key
+ * @description LOGIN_TOKEN_KEY = 'login_tokens:' 登录用户 redis key
  */
 export enum CacheEnum {
   CAPTCHA_KEY = 'captcha_:',
+  LOGIN_TOKEN_KEY = 'login_tokens:',
 }

@@ -53,6 +53,9 @@ dependencies:
   passport-jwt:
     specifier: ^4.0.1
     version: 4.0.1
+  path-to-regexp:
+    specifier: ^6.2.2
+    version: 6.2.2
   redis:
     specifier: ^4.6.14
     version: 4.6.14
@@ -4576,6 +4579,10 @@ packages:
 
   /path-to-regexp@3.2.0:
     resolution: {integrity: sha512-jczvQbCUS7XmS7o+y1aEO9OBVFeZBQ1MDSEqmO7xSoPgOPoowY/SxLpZ6Vh97/8qHZOteiCKb7gkG9gA2ZUxJA==, tarball: https://registry.npmmirror.com/path-to-regexp/-/path-to-regexp-3.2.0.tgz}
+
+  /path-to-regexp@6.2.2:
+    resolution: {integrity: sha512-GQX3SSMokngb36+whdpRXE+3f9V8UzyAorlYvOGx87ufGHehNTn5lCxrKtLyZ4Yl/wEKnNnr98ZzOwwDZV5ogw==, tarball: https://registry.npmmirror.com/path-to-regexp/-/path-to-regexp-6.2.2.tgz}
+    dev: false
 
   /path-type@4.0.0:
     resolution: {integrity: sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==, tarball: https://registry.npmmirror.com/path-type/-/path-type-4.0.0.tgz}

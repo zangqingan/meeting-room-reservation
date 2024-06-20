@@ -27,6 +27,7 @@ import {
   RegisterUserDto,
   LoginUserDto,
 } from './dto';
+import { Public } from 'src/common/decorators/public/public.decorator';
 
 @ApiTags('用户')
 @Controller('user')
@@ -115,6 +116,7 @@ export class UserController {
   @ApiOperation({ summary: '普通用户登录' })
   @ApiBody({ required: true, type: LoginUserDto })
   @ApiResponse({ status: 200, description: '登录成功' })
+  @Public()
   @Post('login')
   async userLogin(@Body() loginUser: LoginUserDto) {
     return await this.userService.login(loginUser, false);

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config'; // 引入内置配置模块实现配置动态读取
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { APP_GUARD } from '@nestjs/core'; // 全局注册守卫
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -8,6 +9,7 @@ import { UserModule } from './modules/system/user/user.module';
 import { RedisModule } from './modules/redis/redis.module';
 import { EmailModule } from './modules/email/email.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { JwtAuthGuard } from './common/guards/auth/auth.guard';
 import configuration from './config';
 
 @Module({
@@ -40,6 +42,12 @@ import configuration from './config';
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
 })
 export class AppModule {}

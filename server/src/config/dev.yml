@@ -51,11 +51,11 @@ permission:
   router:
     whitelist:
       [
-        { path: '/captchaImage', method: 'GET' },
+        { path: '/register-captcha', method: 'GET' },
         { path: '/test', method: 'GET' },
         { path: '/register', method: 'POST' },
         { path: '/login', method: 'POST' },
+        { path: '/admin/login', method: 'GET' },
         { path: '/logout', method: 'POST' },
-        { path: '/permission/{id}', method: 'GET' },
-        { path: '/upload', method: 'POST' },
+        { path: '/init-data', method: 'POST' },
       ]

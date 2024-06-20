@@ -757,11 +757,24 @@ export class AuthService {
 
 ```
 
-配置 jwt 策略
+配置 认证守卫实现登录认证
+
 ```js
+// 创建全局校验守卫类-实现身份验证
+
+$ nest g guard common/guards/auth --no-spec
+
+// 用来在守卫里匹配白名单路由
+$ pnpm install --save path-to-regexp 
+// 通过定义了一个扩展了内置 AuthGuard 的 JwtAuthGuard 类实现
+1110
 
 ```
 
+创建 public 装饰器 用来放行
+```bash
+$ nest g decorator common/decorators/public  --no-spec 
+```
 
 ##
 ##

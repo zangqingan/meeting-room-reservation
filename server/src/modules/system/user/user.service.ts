@@ -151,7 +151,18 @@ export class UserService {
         expiresIn: this.configService.get('jwt.refreshExpiresIn') || '7d',
       },
     );
-
+    // 登录信息存redis
+    const cacheData = {
+      token: uuid,
+      user: vo.userInfo,
+      userId: vo.userInfo.id,
+      username: vo.userInfo.username,
+    };
+    await this.redisService.set(
+      `${CacheEnum.LOGIN_TOKEN_KEY}${uuid}`,
+      JSON.stringify(cacheData),
+      60 * 60 * 24,
+    );
     return vo;
   }
 

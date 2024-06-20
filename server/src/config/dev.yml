@@ -33,7 +33,7 @@ jwt:
   SECRET: 'test'
   SECRET1: 'test11'
   EXPIRES_IN: '1h'
-  refreshExpiresIn: '2h'
+  refreshExpiresIn: '2d'
 
 # Email 配置
 # jwt 配置

@@ -134,14 +134,15 @@ export default () => {
 };
 
 // 注意要在nest-cli.json中配置全局配置编译选项，不然打包后无法读取配置文件
+//  nest cli 的复制 assets 的功能，默认是只复制 src 目录(即根目录)下的配置文件。
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
   "compilerOptions": {
     "deleteOutDir": true,
-    "assets": ["**/*.yml"],// 新增
-    "watchAssets": true // 新增
+    "assets": ["**/*.yml"],// 新增 - 指定 build 时复制到 dist 目录的文件
+    "watchAssets": true // 新增 - 在 assets 变动之后自动重新复制。
   }
 }
 
@@ -674,3 +675,33 @@ export class EmailService {
 
 // 需要的地方注入EmailService调用sendMail方法即可。
 ```
+
+
+## 3.10 登录功能实现
+我们使用jwt和password策略实现、并也是抽离成一个身份认证模块。
+```bash
+$ pnpm install --save @nestjs/jwt
+#  使用Passport集成身份验证库-无论用那种策略都需要这两个包
+$ pnpm install --save @nestjs/passport passport 
+# 我们使用 passport-jwt 策略
+$ pnpm install --save passport-jwt
+# ts
+$ pnpm install --save-dev @types/passport-jwt
+
+# 创建一个认证模块并声明为全局-
+$ nest g module modules/auth --no-spec
+$ nest g service modules/auth --no-spec
+
+# 安装 uuid 用来生成一个唯一的id值
+$ pnpm install --save uuid
+
+```
+
+异步配置 jwt服务
+
+```js
+
+```
+
+##
+##

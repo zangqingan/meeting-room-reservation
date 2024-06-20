@@ -21,7 +21,12 @@ import { RedisService } from 'src/modules/redis/redis.service';
 import { CacheEnum } from 'src/common/enum';
 
 import { UserService } from './user.service';
-import { CreateUserDto, UpdateUserDto, RegisterUserDto } from './dto';
+import {
+  CreateUserDto,
+  UpdateUserDto,
+  RegisterUserDto,
+  LoginUserDto,
+} from './dto';
 
 @ApiTags('用户')
 @Controller('user')
@@ -62,6 +67,12 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
+  @Get('init-data')
+  async initData() {
+    await this.userService.initData();
+    return 'done';
+  }
+
   @Get()
   findAll() {
     return this.userService.findAll();
@@ -86,7 +97,23 @@ export class UserController {
   @ApiBody({ required: true, type: RegisterUserDto })
   @ApiResponse({ status: 200, description: '注册成功' })
   @Post('/register')
-  register(@Body() registerUserDto: RegisterUserDto) {
-    return this.userService.register(registerUserDto);
+  async register(@Body() registerUserDto: RegisterUserDto) {
+    return await this.userService.register(registerUserDto);
+  }
+
+  @ApiOperation({ summary: '普通用户登录' })
+  @ApiBody({ required: true, type: LoginUserDto })
+  @ApiResponse({ status: 200, description: '登录成功' })
+  @Post('login')
+  async userLogin(@Body() loginUser: LoginUserDto) {
+    return await this.userService.login(loginUser, false);
+  }
+
+  @ApiOperation({ summary: '管理员用户登录' })
+  @ApiBody({ required: true, type: LoginUserDto })
+  @ApiResponse({ status: 200, description: '登录成功' })
+  @Post('admin/login')
+  async adminLogin(@Body() loginUser: LoginUserDto) {
+    return await this.userService.login(loginUser, true);
   }
 }

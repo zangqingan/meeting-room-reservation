@@ -45,3 +45,17 @@ export class RegisterUserDto {
   })
   captcha: string;
 }
+
+export class LoginUserDto {
+  @ApiProperty({ required: true })
+  @IsNotEmpty({
+    message: '用户名不能为空',
+  })
+  username: string;
+
+  @ApiProperty({ required: true })
+  @IsNotEmpty({
+    message: '密码不能为空',
+  })
+  password: string;
+}

@@ -42,6 +42,7 @@ export class UserController {
   /**
    * 给邮箱发送验证码
    */
+  @Public()
   @Get('/register-captcha')
   @ApiOperation({ summary: '发送注册验证码' })
   @ApiQuery({ name: 'address', required: true, description: '邮箱地址' })
@@ -77,7 +78,7 @@ export class UserController {
   @ApiOperation({ summary: '普通刷新token' })
   @ApiQuery({ name: 'refreshToken', required: true })
   @ApiResponse({ status: 200, description: '刷新成功' })
-  @RequirePermissions('access', 'change')
+  @RequirePermissions('access')
   @Get('refresh')
   async refresh(@Query('refreshToken') refreshToken: string) {
     return await this.userService.refreshToken(refreshToken, false);

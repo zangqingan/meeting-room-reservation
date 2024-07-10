@@ -14,12 +14,14 @@ import { JwtStrategy } from 'src/common/guards/auth/jwt.strategy'; //导入jwt�
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('jwt.SECRET'),
-        signOptions: {
-          expiresIn: configService.get<string>('jwt.EXPIRES_IN'),
-        },
-      }),
+      async useFactory(configService: ConfigService) {
+        return {
+          secret: configService.get<string>('jwt.SECRET'),
+          signOptions: {
+            expiresIn: configService.get<string>('jwt.EXPIRES_IN'),
+          },
+        };
+      },
       inject: [ConfigService],
     }),
   ],

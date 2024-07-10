@@ -25,7 +25,7 @@ import configuration from './config';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule], // 引入配置模块
       inject: [ConfigService], // 注入配置服务以便读取配置文件中的内容
-      useFactory: (configService: ConfigService) => {
+      useFactory(configService: ConfigService) {
         return {
           type: 'mysql',
           keepConnectionAlive: true,

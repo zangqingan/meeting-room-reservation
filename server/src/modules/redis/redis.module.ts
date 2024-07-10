@@ -9,7 +9,7 @@ import { RedisService } from './redis.service';
     RedisService,
     {
       provide: 'REDIS_CLIENT',
-      useFactory: async (configService: ConfigService) => {
+      async useFactory(configService: ConfigService) {
         const client = createClient({
           url: `redis://${configService.get('redis.host')}:${configService.get('redis.port')}`,
           socket: {

@@ -51,7 +51,6 @@ permission:
   router:
     whitelist:
       [
-        { path: '/register-captcha', method: 'GET' },
         { path: '/test', method: 'GET' },
         { path: '/register', method: 'POST' },
         { path: '/login', method: 'POST' },

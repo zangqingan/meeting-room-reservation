@@ -9,7 +9,7 @@ import { EmailService } from './email.service';
     EmailService,
     {
       provide: 'EMAIL_SERVICE',
-      useFactory: async (configService: ConfigService) => {
+      async useFactory(configService: ConfigService) {
         const emailService = createTransport({
           host: configService.get('email.host'),
           port: configService.get('email.port'),

@@ -3,7 +3,27 @@ import { PartialType } from '@nestjs/mapped-types';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateUserDto {}
-export class UpdateUserDto extends PartialType(CreateUserDto) {}
+export class UpdateUserDto extends PartialType(CreateUserDto) {
+  headPic: string;
+
+  nickName: string;
+
+  @IsNotEmpty({
+    message: '邮箱不能为空',
+  })
+  @IsEmail(
+    {},
+    {
+      message: '不是合法的邮箱格式',
+    },
+  )
+  email: string;
+
+  @IsNotEmpty({
+    message: '验证码不能为空',
+  })
+  captcha: string;
+}
 
 export class RegisterUserDto {
   @ApiProperty({ required: true })
@@ -58,4 +78,30 @@ export class LoginUserDto {
     message: '密码不能为空',
   })
   password: string;
+}
+
+export class UpdateUserPasswordDto {
+  @IsNotEmpty({
+    message: '密码不能为空',
+  })
+  @MinLength(6, {
+    message: '密码不能少于 6 位',
+  })
+  password: string;
+
+  @IsNotEmpty({
+    message: '邮箱不能为空',
+  })
+  @IsEmail(
+    {},
+    {
+      message: '不是合法的邮箱格式',
+    },
+  )
+  email: string;
+
+  @IsNotEmpty({
+    message: '验证码不能为空',
+  })
+  captcha: string;
 }

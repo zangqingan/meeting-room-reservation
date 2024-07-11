@@ -3,10 +3,10 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   Query,
+  Req,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -18,15 +18,17 @@ import {
 
 import { EmailService } from 'src/modules/email/email.service';
 import { RedisService } from 'src/modules/redis/redis.service';
+import { UserService } from './user.service';
 import { CacheEnum } from 'src/common/enum';
 
-import { UserService } from './user.service';
 import {
   CreateUserDto,
   UpdateUserDto,
   RegisterUserDto,
   LoginUserDto,
+  UpdateUserPasswordDto,
 } from './dto';
+import { UserDetailVo } from './vo';
 import { Public } from 'src/common/decorators/public/public.decorator';
 import { RequirePermissions } from 'src/common/decorators/requirePermissions/requirePermissions.decorator';
 
@@ -64,6 +66,44 @@ export class UserController {
     return '发送成功';
   }
 
+  @ApiOperation({ summary: '发送修改密码验证码' })
+  @Get('update_password/captcha')
+  async updatePasswordCaptcha(@Query('address') address: string) {
+    const code = Math.random().toString().slice(2, 8);
+
+    await this.redisService.set(
+      `${CacheEnum.UPDATE_PASSWORD_CAPTCHA_KEY}${address}`,
+      code,
+      10 * 60,
+    );
+
+    await this.emailService.sendMail({
+      to: address,
+      subject: '更改密码验证码',
+      html: `<p>你的更改密码验证码是 ${code}</p>`,
+    });
+    return '发送成功';
+  }
+
+  @ApiOperation({ summary: '发送修改用户信息验证码' })
+  @Get('update/captcha')
+  async updateCaptcha(@Query('address') address: string) {
+    const code = Math.random().toString().slice(2, 8);
+
+    await this.redisService.set(
+      `${CacheEnum.UPDATE_USER_CAPTCHA_KEY}${address}`,
+      code,
+      10 * 60,
+    );
+
+    await this.emailService.sendMail({
+      to: address,
+      subject: '更改用户信息验证码',
+      html: `<p>你的验证码是 ${code}</p>`,
+    });
+    return '发送成功';
+  }
+
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
@@ -93,13 +133,9 @@ export class UserController {
     return await this.userService.refreshToken(refreshToken, true);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  @ApiOperation({ summary: '更改用户信息' })
+  @Post(['update', 'admin/update'])
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(+id, updateUserDto);
   }
 
@@ -111,7 +147,7 @@ export class UserController {
   @ApiOperation({ summary: '用户注册' })
   @ApiBody({ required: true, type: RegisterUserDto })
   @ApiResponse({ status: 200, description: '注册成功' })
-  @Post('/register')
+  @Post('register')
   async register(@Body() registerUserDto: RegisterUserDto) {
     return await this.userService.register(registerUserDto);
   }
@@ -133,8 +169,29 @@ export class UserController {
     return await this.userService.login(loginUser, true);
   }
 
-  @Get()
-  findAll() {
-    return this.userService.findAll();
+  @ApiOperation({ summary: '获取用户详情信息' })
+  @Get('info')
+  async info(@Req() request: any) {
+    const user = await this.userService.findUserDetail(request.user?.userId);
+    const vo = new UserDetailVo();
+    vo.id = user.id;
+    vo.email = user.email;
+    vo.username = user.username;
+    vo.headPic = user.headPic;
+    vo.phoneNumber = user.phoneNumber;
+    vo.nickName = user.nickName;
+    vo.createTime = user.createTime;
+    vo.isFrozen = user.isFrozen;
+
+    return vo;
+  }
+
+  @ApiOperation({ summary: '修改密码' })
+  @Post(['update_password', 'admin/update_password'])
+  async updatePassword(
+    @Param('userId') userId: string,
+    @Body() passwordDto: UpdateUserPasswordDto,
+  ) {
+    return await this.userService.updatePassword(+userId, passwordDto);
   }
 }

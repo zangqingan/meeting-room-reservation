@@ -19,6 +19,7 @@ import {
   UpdateUserDto,
   RegisterUserDto,
   LoginUserDto,
+  UpdateUserPasswordDto,
 } from './dto';
 
 import { User } from './entities/user.entity';
@@ -41,16 +42,40 @@ export class UserService {
     return 'This action adds a new user';
   }
 
-  findAll() {
-    return `This action returns all user`;
-  }
+  /**
+   * @param userId 用户id
+   *
+   */
+  async update(userId: number, updateUserDto: UpdateUserDto) {
+    const captcha = await this.redisService.get(
+      `${CacheEnum.UPDATE_USER_CAPTCHA_KEY}${updateUserDto.email}`,
+    );
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
+    if (!captcha) {
+      throw new HttpException('验证码已失效', HttpStatus.BAD_REQUEST);
+    }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+    if (updateUserDto.captcha !== captcha) {
+      throw new HttpException('验证码不正确', HttpStatus.BAD_REQUEST);
+    }
+
+    const foundUser = await this.userRepository.findOneBy({
+      id: userId,
+    });
+
+    if (updateUserDto.nickName) {
+      foundUser.nickName = updateUserDto.nickName;
+    }
+    if (updateUserDto.headPic) {
+      foundUser.headPic = updateUserDto.headPic;
+    }
+
+    try {
+      await this.userRepository.save(foundUser);
+      return '用户信息修改成功';
+    } catch (e) {
+      throw new HttpException(`${e}`, HttpStatus.BAD_REQUEST);
+    }
   }
 
   remove(id: number) {
@@ -234,6 +259,46 @@ export class UserService {
         return arr;
       }, []),
     };
+  }
+
+  /**
+   * 查找用户详情
+   */
+  async findUserDetail(userId: number) {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+    });
+    return user;
+  }
+
+  /**
+   * 更新密码
+   */
+  async updatePassword(userId: number, passwordDto: UpdateUserPasswordDto) {
+    const captcha = await this.redisService.get(
+      `${CacheEnum.UPDATE_PASSWORD_CAPTCHA_KEY}${passwordDto.email}`,
+    );
+
+    if (!captcha) {
+      throw new HttpException('验证码已失效', HttpStatus.BAD_REQUEST);
+    }
+
+    if (passwordDto.captcha !== captcha) {
+      throw new HttpException('验证码不正确', HttpStatus.BAD_REQUEST);
+    }
+
+    const foundUser = await this.userRepository.findOneBy({
+      id: userId,
+    });
+
+    foundUser.password = md5(passwordDto.password);
+
+    try {
+      await this.userRepository.save(foundUser);
+      return '密码修改成功';
+    } catch (e) {
+      throw new HttpException(`密码修改失败${e}`, HttpStatus.BAD_REQUEST);
+    }
   }
 
   /**

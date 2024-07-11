@@ -826,4 +826,56 @@ app.useGlobalInterceptors(new TransformInterceptor()); // 注册全局返回响�
 ```
 
 
+## 3.12 全局异常过滤器
+自定义 Exception Filter 对异常进行统一处理，比如统一异常响应返回格式等。
+在 Guard、handler、interceptor 等处理逻辑里 throw http 异常，都会被 ExceptionFilter 处理成相应的响应。
+
+```bash
+$ nest g filter common/filter/http-exception --no-spec
+```
+```js
+/**
+ * 数据返回拦截器-统一的异常处理器-在错误发生时做一个统一的过滤处理后再返回给前端。
+ * 使用nest异常类就会进入这里。
+ */
+import {
+  ArgumentsHost,
+  Catch,
+  ExceptionFilter,
+  HttpException,
+} from '@nestjs/common';
+import { Response } from 'express';
+
+@Catch(HttpException)
+export class HttpExceptionFilter implements ExceptionFilter {
+  catch(exception: HttpException, host: ArgumentsHost) {
+    const ctx = host.switchToHttp(); // 获取请求上下文
+    const response = ctx.getResponse<Response>(); // 获取请求上下文中的 response对象
+    const status = exception.getStatus(); // 获取异常状态码
+    // 设置错误信息,没有时根据状态码值返回
+    const message = exception.message
+      ? exception.message
+      : `${status >= 500 ? 'Service Error' : 'Client Error'}`;
+    // 定义返回数据对象
+    const errorResponse = {
+      data: {},
+      message: message,
+      code: status,
+      timestamp: new Date().toISOString(),
+    };
+
+    // 设置返回的状态码， 请求头，错误信息
+    response
+      .status(status)
+      .header('Content-Type', 'application/json; charset=utf-8')
+      .send(errorResponse);
+  }
+}
+// 在入口文件中注册
+app.useGlobalFilters(new HttpExceptionFilter()); // 注册全局异常过滤器
+```
+
+##
+##
+##
 ##

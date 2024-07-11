@@ -5,6 +5,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipePipe } from 'src/common/pipes/validation-pipe/validation-pipe.pipe';
 import { TransformInterceptor } from 'src/common/interceptors/transform/transform.interceptor';
 import { InvokeRecordInterceptor } from 'src/common/interceptors/invoke-record/invoke-record.interceptor';
+import { HttpExceptionFilter } from 'src/common/filter/http-exception/http-exception.filter';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
@@ -23,6 +24,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipePipe()); // 全局注册参数验证管道
   app.useGlobalInterceptors(new InvokeRecordInterceptor()); // 注册接口访问记录拦截器
   app.useGlobalInterceptors(new TransformInterceptor()); // 注册全局返回响应拦截器
+  app.useGlobalFilters(new HttpExceptionFilter()); // 注册全局异常过滤器
 
   await app.listen(3000);
 }

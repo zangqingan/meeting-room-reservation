@@ -4,10 +4,13 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateUserDto {}
 export class UpdateUserDto extends PartialType(CreateUserDto) {
+  @ApiProperty()
   headPic: string;
 
+  @ApiProperty()
   nickName: string;
 
+  @ApiProperty()
   @IsNotEmpty({
     message: '邮箱不能为空',
   })
@@ -19,6 +22,7 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   )
   email: string;
 
+  @ApiProperty()
   @IsNotEmpty({
     message: '验证码不能为空',
   })

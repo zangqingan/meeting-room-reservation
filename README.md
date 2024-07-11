@@ -426,6 +426,7 @@ export class Permission {
 ```
 
 ## 3.5 swagger 接口文档配置
+通过 swagger 生成接口文档。
 ```bash
 $ pnpm install --save @nestjs/swagger
 
@@ -449,7 +450,7 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api-docs', app, document, {
-    jsonDocumentUrl: 'api-docs.json',// json文档地址
+    jsonDocumentUrl: 'api-docs.json',// json文档地址-用于导入如apifox工具中。
   }); // 设置访问接口地址--> http://localhost:PORT/api-docs#/ 查看swagger文档
   await app.listen(3000);
 }

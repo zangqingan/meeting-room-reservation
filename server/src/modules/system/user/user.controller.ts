@@ -34,7 +34,7 @@ import { UserDetailVo } from './vo';
 import { Public } from 'src/common/decorators/public/public.decorator';
 import { RequirePermissions } from 'src/common/decorators/requirePermissions/requirePermissions.decorator';
 
-@ApiTags('用户')
+@ApiTags('用户模块')
 @Controller('user')
 export class UserController {
   constructor(

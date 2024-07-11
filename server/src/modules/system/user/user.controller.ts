@@ -42,9 +42,9 @@ export class UserController {
   /**
    * 给邮箱发送验证码
    */
+  @ApiOperation({ summary: '发送注册验证码' })
   @Public()
   @Get('/register-captcha')
-  @ApiOperation({ summary: '发送注册验证码' })
   @ApiQuery({ name: 'address', required: true, description: '邮箱地址' })
   async captcha(@Query('address') address: string) {
     const code = Math.random().toString().slice(2, 8);
@@ -69,6 +69,7 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
+  @ApiOperation({ summary: '初始化数据' })
   @Get('init-data')
   async initData() {
     await this.userService.initData();

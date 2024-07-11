@@ -53,8 +53,8 @@ permission:
       [
         { path: '/test', method: 'GET' },
         { path: '/register', method: 'POST' },
-        { path: '/login', method: 'POST' },
-        { path: '/admin/login', method: 'GET' },
+        { path: '/user/login', method: 'POST' },
+        { path: '/user/admin/login', method: 'POST' },
         { path: '/logout', method: 'POST' },
         { path: '/init-data', method: 'POST' },
       ]

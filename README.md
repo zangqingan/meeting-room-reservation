@@ -775,11 +775,55 @@ $ pnpm install --save path-to-regexp
 ```bash
 $ nest g decorator common/decorators/public  --no-spec 
 ```
+
 再来实现权限认证、也是需要一个自定义装饰器传入权限码。同时创建一个权限守卫类、检测是否具有权限。
 ```bash
 $ nest g decorator common/decorators/requirePermissions  --no-spec 
 $ nest g guard common/guards/requirePermissions --no-spec
 ```
 
-##
+## 3.11 全局拦截器定义
+定义一个响应拦截器、统一处理返回数据格式、
+再定义一个接口访问记录的 interceptor。
+```bash
+# 创建一个响应拦截器
+$ nest g interceptor common/interceptors/transform --no-spec
+$ nest g interceptor common/interceptors/invoke-record --no-spec
+
+```
+```js
+/**
+ * 数据返回拦截器-对请求成功(状态码为 2xx)的数据在返回给前台前进行一个统一的格式化处理
+ */
+import {
+  CallHandler,
+  ExecutionContext,
+  Injectable,
+  NestInterceptor,
+} from '@nestjs/common';
+import { Observable, map } from 'rxjs';
+import { Response } from 'express';
+
+@Injectable()
+export class TransformInterceptor implements NestInterceptor {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+    // 获取响应头
+    const response = context.switchToHttp().getResponse<Response>();
+    return next.handle().pipe(
+      map((data) => {
+        return {
+          code: response.statusCode,
+          message: '请求成功',
+          data,
+        };
+      }),
+    );
+  }
+}
+// 在入口文件main.ts中全局注册
+app.useGlobalInterceptors(new TransformInterceptor()); // 注册全局返回响应拦截器
+
+```
+
+
 ##

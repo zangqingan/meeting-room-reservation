@@ -19,7 +19,6 @@ export class PermissionGuard implements CanActivate {
     }
 
     // 获取用户拥有的权限列表
-    console.log('request.user.user', request.user.user);
     const permissions = request.user.user.permissions;
 
     // 查看当前接口需要哪些权限

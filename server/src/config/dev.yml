@@ -52,9 +52,6 @@ permission:
     whitelist:
       [
         { path: '/test', method: 'GET' },
-        { path: '/register', method: 'POST' },
+        { path: '/user/register', method: 'POST' },
         { path: '/user/login', method: 'POST' },
-        { path: '/user/admin/login', method: 'POST' },
-        { path: '/logout', method: 'POST' },
-        { path: '/init-data', method: 'POST' },
       ]

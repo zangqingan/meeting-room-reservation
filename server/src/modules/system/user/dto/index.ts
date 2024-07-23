@@ -85,6 +85,7 @@ export class LoginUserDto {
 }
 
 export class UpdateUserPasswordDto {
+  @ApiProperty({ required: true })
   @IsNotEmpty({
     message: '密码不能为空',
   })
@@ -93,6 +94,7 @@ export class UpdateUserPasswordDto {
   })
   password: string;
 
+  @ApiProperty({ required: true })
   @IsNotEmpty({
     message: '邮箱不能为空',
   })
@@ -104,6 +106,7 @@ export class UpdateUserPasswordDto {
   )
   email: string;
 
+  @ApiProperty({ required: true })
   @IsNotEmpty({
     message: '验证码不能为空',
   })

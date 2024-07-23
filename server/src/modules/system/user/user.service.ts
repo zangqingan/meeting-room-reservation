@@ -15,7 +15,6 @@ import { md5, generateUUID } from 'src/common/utils';
 import { LoginUserVo } from './vo/index';
 
 import {
-  CreateUserDto,
   UpdateUserDto,
   RegisterUserDto,
   LoginUserDto,
@@ -37,10 +36,6 @@ export class UserService {
     @InjectRepository(Permission)
     private permissionRepository: Repository<Permission>,
   ) {}
-
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
-  }
 
   /**
    * @param userId 用户id
@@ -78,8 +73,15 @@ export class UserService {
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  /**
+   * @param id 删除用户id
+   */
+  async remove(id: number) {
+    const user = await this.userRepository.findOneBy({
+      id,
+    });
+    user.isFrozen = true;
+    await this.userRepository.save(user);
   }
 
   /**
@@ -347,7 +349,6 @@ export class UserService {
     const foundUser = await this.userRepository.findOneBy({
       id: userId,
     });
-
     foundUser.password = md5(passwordDto.password);
 
     try {
@@ -399,5 +400,6 @@ export class UserService {
     await this.permissionRepository.save([permission1, permission2]);
     await this.roleRepository.save([role1, role2]);
     await this.userRepository.save([user1, user2]);
+    return 'done';
   }
 }

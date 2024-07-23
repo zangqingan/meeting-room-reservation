@@ -13,26 +13,26 @@ import {
 import {
   ApiBody,
   ApiOperation,
+  ApiParam,
   ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 
+import { RequirePermissions } from 'src/common/decorators/requirePermissions/requirePermissions.decorator';
+import { Public } from 'src/common/decorators/public/public.decorator';
 import { EmailService } from 'src/modules/email/email.service';
 import { RedisService } from 'src/modules/redis/redis.service';
 import { UserService } from './user.service';
 import { CacheEnum } from 'src/common/enum';
 
 import {
-  CreateUserDto,
   UpdateUserDto,
   RegisterUserDto,
   LoginUserDto,
   UpdateUserPasswordDto,
 } from './dto';
 import { UserDetailVo } from './vo';
-import { Public } from 'src/common/decorators/public/public.decorator';
-import { RequirePermissions } from 'src/common/decorators/requirePermissions/requirePermissions.decorator';
 
 @ApiTags('用户模块')
 @Controller('user')
@@ -43,13 +43,10 @@ export class UserController {
     private readonly redisService: RedisService,
   ) {}
 
-  /**
-   * 给邮箱发送验证码
-   */
   @ApiOperation({ summary: '发送注册验证码' })
+  @ApiQuery({ name: 'address', required: true, description: '验证码接收邮箱' })
   @Public()
   @Get('/register-captcha')
-  @ApiQuery({ name: 'address', required: true, description: '邮箱地址' })
   async captcha(@Query('address') address: string) {
     const code = Math.random().toString().slice(2, 8);
 
@@ -69,6 +66,8 @@ export class UserController {
   }
 
   @ApiOperation({ summary: '发送修改密码验证码' })
+  @ApiQuery({ name: 'address', required: true, description: '验证码接收邮箱' })
+  @Public()
   @Get('update_password/captcha')
   async updatePasswordCaptcha(@Query('address') address: string) {
     const code = Math.random().toString().slice(2, 8);
@@ -88,6 +87,8 @@ export class UserController {
   }
 
   @ApiOperation({ summary: '发送修改用户信息验证码' })
+  @ApiQuery({ name: 'address', required: true, description: '验证码接收邮箱' })
+  @Public()
   @Get('update/captcha')
   async updateCaptcha(@Query('address') address: string) {
     const code = Math.random().toString().slice(2, 8);
@@ -106,16 +107,10 @@ export class UserController {
     return '发送成功';
   }
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
-  }
-
   @ApiOperation({ summary: '初始化数据' })
   @Get('init-data')
   async initData() {
     await this.userService.initData();
-    return 'done';
   }
 
   @ApiOperation({ summary: '普通刷新token' })
@@ -136,12 +131,20 @@ export class UserController {
   }
 
   @ApiOperation({ summary: '更改用户信息' })
+  @ApiBody({ type: UpdateUserDto })
+  @ApiResponse({ status: 200, description: '更新成功' })
+  @ApiQuery({ name: 'id', required: true })
   @Post(['update', 'admin/update'])
-  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
+  async update(@Query('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return await this.userService.update(+id, updateUserDto);
   }
 
   @ApiOperation({ summary: '获取用户列表' })
+  @ApiQuery({ name: 'pageNo', required: false })
+  @ApiQuery({ name: 'pageSize', required: false })
+  @ApiQuery({ name: 'username', required: false })
+  @ApiQuery({ name: 'nickName', required: false })
+  @ApiQuery({ name: 'email', required: false })
   @Get('list')
   async list(
     @Query('pageNo', new DefaultValuePipe(1), ParseIntPipe) pageNo: number,
@@ -159,9 +162,11 @@ export class UserController {
     );
   }
 
+  @ApiOperation({ summary: '用户删除' })
+  @ApiParam({ name: 'id', description: '用户id' })
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+  async remove(@Param('id') id: string) {
+    return await this.userService.remove(+id);
   }
 
   @ApiOperation({ summary: '用户注册' })
@@ -175,7 +180,6 @@ export class UserController {
   @ApiOperation({ summary: '普通用户登录' })
   @ApiBody({ required: true, type: LoginUserDto })
   @ApiResponse({ status: 200, description: '登录成功' })
-  @Public()
   @Post('login')
   async userLogin(@Body() loginUser: LoginUserDto) {
     return await this.userService.login(loginUser, false);
@@ -184,6 +188,7 @@ export class UserController {
   @ApiOperation({ summary: '管理员用户登录' })
   @ApiBody({ required: true, type: LoginUserDto })
   @ApiResponse({ status: 200, description: '登录成功' })
+  @Public()
   @Post('admin/login')
   async adminLogin(@Body() loginUser: LoginUserDto) {
     return await this.userService.login(loginUser, true);
@@ -207,18 +212,20 @@ export class UserController {
   }
 
   @ApiOperation({ summary: '修改密码' })
+  @ApiBody({ type: UpdateUserPasswordDto })
+  @ApiQuery({ name: 'userId', description: '用户id' })
   @Post(['update_password', 'admin/update_password'])
   async updatePassword(
-    @Param('userId') userId: string,
+    @Query('userId') userId: string,
     @Body() passwordDto: UpdateUserPasswordDto,
   ) {
     return await this.userService.updatePassword(+userId, passwordDto);
   }
 
   @ApiOperation({ summary: '冻结用户' })
+  @ApiQuery({ name: 'id', description: '用户id' })
   @Get('freeze')
   async freeze(@Query('id') userId: number) {
     await this.userService.freezeUserById(userId);
-    return 'success';
   }
 }

@@ -52,6 +52,7 @@ $ nest new server
 # 使用pnpm
 
 ```
+
 ## 3.2 配置全局配置读取 yaml 配置文件
 为实现参数的读取，需要安装如下依赖包：
 ```bash
@@ -876,7 +877,78 @@ export class HttpExceptionFilter implements ExceptionFilter {
 app.useGlobalFilters(new HttpExceptionFilter()); // 注册全局异常过滤器
 ```
 
-## 
-##
-##
-##
+## 3.13 会议室管理模块开发
+会议室管理模块主要就是新增、修改、删除、搜索、列表等功能。
+```bash
+$ nest g resource modules/system/meeting-room
+
+``` 
+根据数据库设计文件定义实体类
+
+```js
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+
+@Entity({
+  name: 'meeting_room',
+})
+export class MeetingRoom {
+  @PrimaryGeneratedColumn({
+    comment: '会议室ID',
+  })
+  id: number;
+
+  @Column({
+    length: 50,
+    comment: '会议室名字',
+  })
+  name: string;
+
+  @Column({
+    comment: '会议室容量',
+  })
+  capacity: number;
+
+  @Column({
+    length: 50,
+    comment: '会议室位置',
+  })
+  location: string;
+
+  @Column({
+    length: 50,
+    comment: '设备',
+    default: '',
+  })
+  equipment: string;
+
+  @Column({
+    length: 100,
+    comment: '描述',
+    default: '',
+  })
+  description: string;
+
+  @Column({
+    comment: '是否被预订',
+    default: false,
+  })
+  isBooked: boolean;
+
+  @CreateDateColumn({
+    comment: '创建时间',
+  })
+  createTime: Date;
+
+  @UpdateDateColumn({
+    comment: '更新时间',
+  })
+  updateTime: Date;
+}
+
+```

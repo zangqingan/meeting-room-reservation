@@ -11,6 +11,7 @@ import { EmailModule } from './modules/email/email.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { JwtAuthGuard } from './common/guards/auth/auth.guard';
 import { PermissionGuard } from './common/guards/permission/permission.guard';
+import { MeetingRoomModule } from './modules/system/meeting-room/meeting-room.module';
 import configuration from './config';
 
 @Module({
@@ -41,6 +42,7 @@ import configuration from './config';
     RedisModule,
     EmailModule,
     AuthModule,
+    MeetingRoomModule,
   ],
   controllers: [AppController],
   providers: [

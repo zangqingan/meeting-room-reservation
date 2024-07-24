@@ -10,12 +10,15 @@ import { Like, Repository } from 'typeorm';
 
 import { CreateMeetingRoomDto, UpdateMeetingRoomDto } from './dto';
 import { MeetingRoom } from './entities/meeting-room.entity';
+import { Booking } from '../booking/entities/booking.entity';
 
 @Injectable()
 export class MeetingRoomService {
   constructor(
     @InjectRepository(MeetingRoom)
     private readonly meetingRoomRepository: Repository<MeetingRoom>,
+    @InjectRepository(Booking)
+    private readonly bookingRepository: Repository<Booking>,
   ) {}
 
   /**
@@ -97,8 +100,19 @@ export class MeetingRoomService {
    * @param id 会议室id
    * @returns
    */
-  remove(id: number) {
-    return `This action removes a #${id} meetingRoom`;
+  async remove(id: number) {
+    // booking 表关联了 meeting-room 表，有外键约束，所以要删除所有的预定之后再去删除会议室。
+    const bookings = await this.bookingRepository.findBy({
+      room: {
+        id: id,
+      },
+    });
+
+    for (let i = 0; i < bookings.length; i++) {
+      this.bookingRepository.delete(bookings[i].id);
+    }
+    await this.meetingRoomRepository.delete(id);
+    return '删除会议室成功';
   }
 
   /**

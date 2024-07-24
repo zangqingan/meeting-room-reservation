@@ -12,6 +12,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { JwtAuthGuard } from './common/guards/auth/auth.guard';
 import { PermissionGuard } from './common/guards/permission/permission.guard';
 import { MeetingRoomModule } from './modules/system/meeting-room/meeting-room.module';
+import { BookingModule } from './modules/system/booking/booking.module';
 import configuration from './config';
 
 @Module({
@@ -43,6 +44,7 @@ import configuration from './config';
     EmailModule,
     AuthModule,
     MeetingRoomModule,
+    BookingModule,
   ],
   controllers: [AppController],
   providers: [

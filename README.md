@@ -880,7 +880,7 @@ app.useGlobalFilters(new HttpExceptionFilter()); // 注册全局异常过滤器
 ## 3.13 会议室管理模块开发
 会议室管理模块主要就是新增、修改、删除、搜索、列表等功能。
 ```bash
-$ nest g resource modules/system/meeting-room
+$ nest g resource modules/system/meeting-room --no-spec
 
 ``` 
 根据数据库设计文件定义实体类
@@ -952,3 +952,13 @@ export class MeetingRoom {
 }
 
 ```
+
+## 3.14 预定管理模块
+
+```bash
+$ nest g resource modules/system/booking --no-spec
+
+```
+```js
+```
+## 

@@ -37,3 +37,8 @@ export enum PermissionEnum {
   access = 'access',
   change = 'change',
 }
+
+export enum UrgeEnum {
+  URGE = 'urge_',
+  ADMIN_EMAIL = 'admin_email',
+}

@@ -961,4 +961,16 @@ $ nest g resource modules/system/booking --no-spec
 ```
 ```js
 ```
+
+## 3.15 统计管理模块
+
+```bash
+$ nest g module statistic --no-spec
+$ nest g service statistic --no-spec
+$ nest g controller statistic --no-spec
+
+```
+```js
+```
+
 ## 
